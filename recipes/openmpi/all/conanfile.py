@@ -190,15 +190,20 @@ class OpenMPIConan(ConanFile):
         # The components are modelled based on OpenMPI's pkg-config files
 
         # Run-time environment library
-        self.cpp_info.components["orte"].set_property("pkg_config_name", "orte")
-        self.cpp_info.components["orte"].libs = ["open-rte", "open-pal"]
-        self.cpp_info.components["orte"].includedirs.append(os.path.join("include", "openmpi"))
+        self.cpp_info.components["opal"].set_property("pkg_config_name", "opal")
+        self.cpp_info.components["opal"].libs = ["open-pal"]
+        self.cpp_info.components["opal"].includedirs.append(os.path.join("include", "openmpi"))
+
         if self.settings.os in ["Linux", "FreeBSD"]:
-            self.cpp_info.components["orte"].system_libs = ["dl", "pthread", "rt", "util"]
-        self.cpp_info.components["orte"].cflags = ["-pthread"]
+            self.cpp_info.components["opal"].system_libs = ["dl", "pthread", "rt", "util"]
+        self.cpp_info.components["opal"].cflags = ["-pthread"]
         if self.options.get_safe("enable_cxx_exceptions"):
-            self.cpp_info.components["orte"].cflags.append("-fexceptions")
-        self.cpp_info.components["orte"].requires = requires
+            self.cpp_info.components["opal"].cflags.append("-fexceptions")
+        self.cpp_info.components["opal"].requires = requires
+
+        self.cpp_info.components["orte"].set_property("pkg_config_name", "orte")
+        self.cpp_info.components["orte"].libs = ["open-rte"]
+        self.cpp_info.components["orte"].requires = [ "opal" ]
 
         self.cpp_info.components["ompi"].set_property("pkg_config_name", "ompi")
         self.cpp_info.components["ompi"].libs = ["mpi"]
